@@ -1,8 +1,7 @@
 # KenpoApi
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/kenpo_api`. To experiment with that code, run `bin/console` for an interactive prompt.
+Ruby binding for kenpo reservation API ([関東ITソフトウェア健康保険組合 施設・レクリエーション](https://as.its-kenpo.or.jp/)).
 
-TODO: Delete this and the text above, and describe your gem
 
 ## Installation
 
@@ -32,5 +31,5 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/kenpo_api.
+Bug reports and pull requests are welcome on GitHub at https://github.com/tearoom6/kenpo_api.
 
