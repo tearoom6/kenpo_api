@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe KenpoApi::Client do
   let(:client) do
-    KenpoApi::Client.new
+    KenpoApi::Client.instance
   end
 
   it 'can access kenpo webpage via HTTP GET method' do

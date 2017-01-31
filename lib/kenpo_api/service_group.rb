@@ -8,18 +8,27 @@ module KenpoApi
       @path = path
     end
 
-    def services
-      KenpoApi.client.fetch_elements(@path, '//section[@class="request-box"]//a').map do |link|
-        Service.new(
-          group: self,
+    def self.list(service_category)
+      return [] if service_category.nil?
+      Client.instance.fetch_elements(service_category.path, '//section[@class="request-box"]//a').map do |link|
+        self.new(
+          category: service_category,
           text: link.text,
           path: link['href'],
         )
       end
     end
 
-    def find_service_group(text)
-      services.find { |service| service.text == text }
+    def self.find(service_category, text)
+      self.list(service_category).find { |group| group.text == text }
+    end
+
+    def services
+      Service.list(self)
+    end
+
+    def find_service(text)
+      Service.find(self, text)
     end
 
     def available?

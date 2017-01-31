@@ -1,3 +1,4 @@
+require 'singleton'
 require 'faraday'
 require 'nokogiri'
 
@@ -6,6 +7,8 @@ module KenpoApi
   end
 
   class Client
+    include Singleton
+
     BASE_URL = 'https://as.its-kenpo.or.jp/'
 
     def initialize
