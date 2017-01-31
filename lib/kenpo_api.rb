@@ -5,5 +5,6 @@ require 'kenpo_api/service_group'
 require 'kenpo_api/service'
 
 module KenpoApi
+  class NetworkError < StandardError; end
 
 end
