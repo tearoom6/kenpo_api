@@ -23,7 +23,7 @@ module KenpoApi
     end
 
     def self.list
-      Client.instance.fetch_elements('/service_category/index', '//div[@class="request-box"]//a').map do |link|
+      Client.instance.fetch_document('/service_category/index').xpath('//div[@class="request-box"]//a').map do |link|
         self.new(
           text: link.text,
           path: link['href'],
