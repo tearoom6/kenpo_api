@@ -8,23 +8,21 @@ module KenpoApi
 
     def request_reservation_url(email)
       # Accept agreement.
-      Client.instance.fetch_document(reservation_service.path) do |document|
-        form_element = document.xpath('//form').first
-        path = form_element['action']
-        method = form_element['method']
-        params = document.xpath('//input[@type="hidden"]').map {|input| [input['name'], input['value']]}.to_h
+      document = Client.instance.fetch_document(reservation_service.path)
+      form_element = document.xpath('//form').first
+      path = form_element['action']
+      method = form_element['method']
+      params = document.xpath('//input[@type="hidden"]').map {|input| [input['name'], input['value']]}.to_h
 
-        # Input email.
-        Client.instance.fetch_document(path, method: method, params: params) do |document|
-          form_element = document.xpath('//form').first
-          path = form_element['action']
-          method = form_element['method']
-          params = document.xpath('//input[@type="hidden"]').map {|input| [input['name'], input['value']]}.to_h
-          params['email'] = email
+      # Input email.
+      document = Client.instance.fetch_document(path, method: method, params: params)
+      form_element = document.xpath('//form').first
+      path = form_element['action']
+      method = form_element['method']
+      params = document.xpath('//input[@type="hidden"]').map {|input| [input['name'], input['value']]}.to_h
+      params['email'] = email
 
-          Client.instance.access(path, method: method, params: params)
-        end
-      end
+      Client.instance.access(path, method: method, params: params)
     rescue NetworkError => e
       raise e
     rescue => e
