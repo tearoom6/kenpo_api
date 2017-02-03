@@ -10,7 +10,7 @@ module KenpoApi
 
     def self.list(service_category)
       return [] if service_category.nil?
-      Client.instance.fetch_document(service_category.path).xpath('//section[@class="request-box"]//a').map do |link|
+      Client.instance.fetch_document(path: service_category.path).xpath('//section[@class="request-box"]//a').map do |link|
         self.new(
           category: service_category,
           text: link.text,

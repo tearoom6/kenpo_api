@@ -22,7 +22,7 @@ module KenpoApi
       @cookiejar = CookieJar::Jar.new
     end
 
-    def access(path, method: :get, params: {})
+    def access(path:, method: :get, params: {})
       response = @conn.send(method, path, params) do |req|
         req.options.timeout = @timeout
         req.options.open_timeout = @open_timeout
@@ -34,18 +34,34 @@ module KenpoApi
 
       return (yield response) if block_given?
       response
-    rescue NetworkError => e
+    rescue KenpoApiError => e
       raise e
     rescue => e
       raise NetworkError.new("Failed to fetch http content. path: #{path} original_error: #{e.message}")
     end
 
-    def fetch_document(path, method: :get, params: {})
-      response = access(path, method: method, params: params)
+    def fetch_document(path:, method: :get, params: {})
+      response = access(path: path, method: method, params: params)
       document = Nokogiri::HTML(response.body)
 
       return (yield document) if block_given?
       document
+    end
+
+    def parse_single_form_page(path:, method: :get, params: {})
+      document = fetch_document(path: path, method: method, params: params)
+      form_element = document.xpath('//form').first
+      path = form_element['action']
+      method = form_element['method']
+      params = document.xpath('//input[@type="hidden"]').map {|input| [input['name'], input['value']]}.to_h
+      next_page_info = {path: path, method: method, params: params}
+
+      return (yield next_page_info) if block_given?
+      next_page_info
+    rescue KenpoApiError => e
+      raise e
+    rescue => e
+      raise ParseError.new("Failed to parse HTML. message: #{e.message}")
     end
 
   end

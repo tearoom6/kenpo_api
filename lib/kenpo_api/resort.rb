@@ -8,25 +8,13 @@ module KenpoApi
 
     def request_reservation_url(email)
       # Accept agreement.
-      document = Client.instance.fetch_document(reservation_service.path)
-      form_element = document.xpath('//form').first
-      path = form_element['action']
-      method = form_element['method']
-      params = document.xpath('//input[@type="hidden"]').map {|input| [input['name'], input['value']]}.to_h
+      next_page_info = Client.instance.parse_single_form_page(path: reservation_service.path)
 
       # Input email.
-      document = Client.instance.fetch_document(path, method: method, params: params)
-      form_element = document.xpath('//form').first
-      path = form_element['action']
-      method = form_element['method']
-      params = document.xpath('//input[@type="hidden"]').map {|input| [input['name'], input['value']]}.to_h
-      params['email'] = email
+      next_page_info = Client.instance.parse_single_form_page(next_page_info)
+      next_page_info[:params]['email'] = email
 
-      Client.instance.access(path, method: method, params: params)
-    rescue NetworkError => e
-      raise e
-    rescue => e
-      raise ParseError.new("Failed to parse HTML. message: #{e.message}")
+      Client.instance.access(next_page_info)
     end
 
     def apply_reservation(reservation_url)

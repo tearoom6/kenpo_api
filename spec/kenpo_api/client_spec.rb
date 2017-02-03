@@ -6,7 +6,7 @@ describe KenpoApi::Client do
   end
 
   it 'can access kenpo webpage via HTTP GET method' do
-    success_response = client.access('/service_category/index')
+    success_response = client.access(path: '/service_category/index')
     expect(success_response.status).to eq(200)
   end
 end
