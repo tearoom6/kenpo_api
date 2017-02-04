@@ -11,5 +11,6 @@ module KenpoApi
   class NotFoundError     < KenpoApiError; end
   class NotAvailableError < KenpoApiError; end
   class ParseError        < KenpoApiError; end
+  class ValidationError   < KenpoApiError; end
 
 end

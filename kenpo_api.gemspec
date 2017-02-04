@@ -35,4 +35,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'faraday', '~> 0.10.0'
   spec.add_development_dependency 'cookiejar', '~> 0.3.3'
   spec.add_development_dependency 'nokogiri', '~> 1.6'
+  spec.add_development_dependency 'dry-validation', '~> 0.10.5'
 end

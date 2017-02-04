@@ -51,13 +51,17 @@ module KenpoApi
     def parse_single_form_page(path:, method: :get, params: {})
       document = fetch_document(path: path, method: method, params: params)
       form_element = document.xpath('//form').first
-      path = form_element['action']
-      method = form_element['method']
-      params = document.xpath('//input[@type="hidden"]').map {|input| [input['name'], input['value']]}.to_h
-      next_page_info = {path: path, method: method, params: params}
 
-      return (yield next_page_info) if block_given?
-      next_page_info
+      next_page_info = nil
+      unless form_element.nil?
+        path = form_element['action']
+        method = form_element['method']
+        params = document.xpath('//input[@type="hidden"]').select {|input| ! input['name'].nil?}.map {|input| [input['name'], input['value']]}.to_h
+        next_page_info = {path: path, method: method, params: params}
+      end
+
+      return (yield next_page_info, document) if block_given?
+      return next_page_info, document
     rescue KenpoApiError => e
       raise e
     rescue => e
