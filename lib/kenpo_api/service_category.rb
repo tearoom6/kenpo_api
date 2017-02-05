@@ -14,33 +14,33 @@ module KenpoApi
       recreation:           '体育奨励イベント',
     }
 
-    attr_reader :name, :text, :path
+    attr_reader :category_code, :name, :path
 
-    def initialize(text:, path:)
-      @name = CATEGORIES.key(text)
-      @text = text
+    def initialize(name:, path:)
+      @category_code = CATEGORIES.key(name)
+      @name = name
       @path = path
     end
 
     def self.list
       Client.instance.fetch_document(path: '/service_category/index').xpath('//div[@class="request-box"]//a').map do |link|
         self.new(
-          text: link.text,
+          name: link.text,
           path: link['href'],
         )
       end
     end
 
-    def self.find(name)
-      self.list.find { |category| category.name == name }
+    def self.find(category_code)
+      self.list.find { |category| category.category_code == category_code }
     end
 
     def service_groups
       ServiceGroup.list(self)
     end
 
-    def find_service_group(text)
-      ServiceGroup.find(self, text)
+    def find_service_group(name)
+      ServiceGroup.find(self, name)
     end
 
     def available?

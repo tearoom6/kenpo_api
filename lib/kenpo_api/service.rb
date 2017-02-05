@@ -1,10 +1,10 @@
 module KenpoApi
   class Service
-    attr_reader :group, :text, :path
+    attr_reader :group, :name, :path
 
-    def initialize(group:, text:, path:)
+    def initialize(group:, name:, path:)
       @group = group
-      @text = text
+      @name = name
       @path = path
     end
 
@@ -13,14 +13,14 @@ module KenpoApi
       Client.instance.fetch_document(path: service_group.path).xpath('//section[@class="request-box"]//a').map do |link|
         self.new(
           group: service_group,
-          text: link.text,
+          name: link.text,
           path: link['href'],
         )
       end
     end
 
-    def self.find(service_group, text)
-      self.list(service_group).find { |service| service.text == text }
+    def self.find(service_group, name)
+      self.list(service_group).find { |service| service.name == name }
     end
 
   end
