@@ -4,6 +4,12 @@ module KenpoApi
   class Resort
     extend Routines
 
+    def self.resort_names
+      category = ServiceCategory.find(:resort_reserve)
+      raise NotFoundError.new("Service category not found. code: #{category_code}") if category.nil?
+      category.service_groups.map {|group| group.name}
+    end
+
     def self.request_reservation_url(resort_name:, email:)
       service = find_service(category_code: :resort_reserve, group_name: resort_name)
       request_application_url(service_path: service.path, email: email)
