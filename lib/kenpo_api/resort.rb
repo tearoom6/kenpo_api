@@ -15,6 +15,12 @@ module KenpoApi
       request_application_url(service_path: service.path, email: email)
     end
 
+    def self.check_reservation_criteria(application_url)
+      html_document = Client.instance.fetch_document(path: application_url)
+      raise NotAvailableError.new("Application URL is invalid: #{html_document.xpath('//p').first.content}") if html_document.xpath('//form').first.nil?
+      reservation_criteria(html_document)
+    end
+
     def self.apply_reservation(application_url, application_data)
       apply(application_url: application_url) do |html_document|
         reservation_data = self.validate_reservation_data(application_data, html_document)
@@ -23,6 +29,22 @@ module KenpoApi
     end
 
     private
+
+    def self.reservation_criteria(html_document)
+      criteria = {}
+      criteria[:note]          = html_document.xpath('//div[@class="note mb10"]').first.text
+      criteria[:service_name]  = html_document.xpath('//form/div[@class="form_box"]//dd[@class="elements"]').first.text
+      criteria[:birth_year]   = html_document.xpath('id("apply_year")/*/@value')        .map {|attr| attr.value }.select {|val| val != '' }  # (1917..2017)
+      criteria[:birth_month]  = html_document.xpath('id("apply_month")/*/@value')       .map {|attr| attr.value }.select {|val| val != '' }  # (1..12)
+      criteria[:birth_day]    = html_document.xpath('id("apply_day")/*/@value')         .map {|attr| attr.value }.select {|val| val != '' }  # (1..31)
+      criteria[:gender]       = html_document.xpath('id("apply_gender")/*/@value')      .map {|attr| attr.value }.map    {|val| val.to_sym } # [:man, :woman]
+      criteria[:relationship] = html_document.xpath('id("apply_relationship")/*/@value').map {|attr| attr.value }.map    {|val| val.to_sym } # [:myself, :family]
+      criteria[:state]        = html_document.xpath('id("apply_state")/*/@value')       .map {|attr| attr.value }.select {|val| val != '' }  # (1..47)
+      criteria[:join_time]    = html_document.xpath('id("apply_join_time")/*/@value')   .map {|attr| attr.value }.select {|val| val != '' }  # ['2017-04-01', .., '2017-04-30']
+      criteria[:night_count]  = html_document.xpath('id("apply_night_count")/*/@value') .map {|attr| attr.value }.select {|val| val != '' }  # (1..2)
+      criteria[:room_number]  = html_document.xpath('id("house_select")/*/@value')      .map {|attr| attr.value.to_i }                       # (1..10)
+      criteria
+    end
 
     def self.preprocess_reservation_data(reservation_data)
       reservation_data[:birth_year]    = reservation_data[:birth_year].to_s
@@ -37,34 +59,26 @@ module KenpoApi
 
     def self.validate_reservation_data(reservation_data, html_document)
       reservation_data = preprocess_reservation_data(reservation_data)
-      birth_years   = html_document.xpath('id("apply_year")/*/@value')        .map {|attr| attr.value }.select {|val| val != '' }  # (1917..2017)
-      birth_months  = html_document.xpath('id("apply_month")/*/@value')       .map {|attr| attr.value }.select {|val| val != '' }  # (1..12)
-      birth_days    = html_document.xpath('id("apply_day")/*/@value')         .map {|attr| attr.value }.select {|val| val != '' }  # (1..31)
-      genders       = html_document.xpath('id("apply_gender")/*/@value')      .map {|attr| attr.value }.map    {|val| val.to_sym } # [:man, :woman]
-      relationships = html_document.xpath('id("apply_relationship")/*/@value').map {|attr| attr.value }.map    {|val| val.to_sym } # [:myself, :family]
-      states        = html_document.xpath('id("apply_state")/*/@value')       .map {|attr| attr.value }.select {|val| val != '' }  # (1..47)
-      join_times    = html_document.xpath('id("apply_join_time")/*/@value')   .map {|attr| attr.value }.select {|val| val != '' }  # ['2017-04-01', .., '2017-04-30']
-      night_counts  = html_document.xpath('id("apply_night_count")/*/@value') .map {|attr| attr.value }.select {|val| val != '' }  # (1..2)
-      room_numbers  = html_document.xpath('id("house_select")/*/@value')      .map {|attr| attr.value.to_i }                       # (1..10)
+      criteria = reservation_criteria(html_document)
 
       schema = Dry::Validation.Schema do
         required(:sign_no)      .filled(:int?)
         required(:insured_no)   .filled(:int?)
         required(:office_name)  .filled(:str?)
         required(:kana_name)    .filled(:str?)
-        required(:birth_year)   .filled(included_in?: birth_years)
-        required(:birth_month)  .filled(included_in?: birth_months)
-        required(:birth_day)    .filled(included_in?: birth_days)
-        required(:gender)       .filled(included_in?: genders)
-        required(:relationship) .filled(included_in?: relationships)
+        required(:birth_year)   .filled(included_in?: criteria[:birth_year])
+        required(:birth_month)  .filled(included_in?: criteria[:birth_month])
+        required(:birth_day)    .filled(included_in?: criteria[:birth_day])
+        required(:gender)       .filled(included_in?: criteria[:gender])
+        required(:relationship) .filled(included_in?: criteria[:relationship])
         required(:contact_phone).filled(format?: /^[0-9-]+$/)
         required(:postal_code)  .filled(format?: /^[0-9]{3}-[0-9]{4}$/)
-        required(:state)        .filled(included_in?: states)
+        required(:state)        .filled(included_in?: criteria[:state])
         required(:address)      .filled(:str?)
-        required(:join_time)    .filled(included_in?: join_times)
-        required(:night_count)  .filled(included_in?: night_counts)
+        required(:join_time)    .filled(included_in?: criteria[:join_time])
+        required(:night_count)  .filled(included_in?: criteria[:night_count])
         required(:stay_persons) .filled(:int?)
-        required(:room_persons) .filled{ array? & each(:int?) & size?(room_numbers) }
+        required(:room_persons) .filled{ array? & each(:int?) & size?(criteria[:room_number]) }
         required(:meeting_dates).value{ array? & each{ int? & included_in?([1,2,3]) } & size?((0..3)) }
         required(:must_meeting) .maybe(:bool?)
       end

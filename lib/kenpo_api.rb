@@ -5,6 +5,7 @@ require 'kenpo_api/service_group'
 require 'kenpo_api/service'
 require 'kenpo_api/routines'
 require 'kenpo_api/resort'
+require 'kenpo_api/sport'
 
 module KenpoApi
   class KenpoApiError     < StandardError; end
