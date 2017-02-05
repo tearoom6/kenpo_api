@@ -2,6 +2,9 @@
 
 Ruby binding for kenpo reservation API ([関東ITソフトウェア健康保険組合 施設・レクリエーション](https://as.its-kenpo.or.jp/)).
 
+[![Travis](https://img.shields.io/travis/tearoom6/kenpo_api.svg)](https://travis-ci.org/tearoom6/kenpo_api)
+[![Gem](https://img.shields.io/gem/dtv/kenpo_api.svg)](https://rubygems.org/gems/kenpo_api)
+![license](https://img.shields.io/github/license/tearoom6/kenpo_api.svg)
 
 ## Installation
 
