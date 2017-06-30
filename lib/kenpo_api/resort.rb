@@ -85,7 +85,7 @@ module KenpoApi
 
       result = schema.call(reservation_data)
       raise ValidationError.new("Reservation data is invalid. #{result.messages.to_s}") if result.failure?
-      reise ValidationError.new('Stay persons count should match the sum of room persons') unless reservation_data[:stay_persons] != reservation_data[:room_persons].inject(:+)
+      raise ValidationError.new('Stay persons count should match the sum of room persons') unless reservation_data[:stay_persons] == reservation_data[:room_persons].inject(:+)
       result.output
     end
 
