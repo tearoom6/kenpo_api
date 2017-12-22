@@ -3,7 +3,7 @@ require 'spec_helper'
 describe KenpoApi::ServiceCategory do
   it 'lists service categories' do
     service_categories = KenpoApi::ServiceCategory.list
-    expect(service_categories.count).to eq(11)
+    expect(service_categories.count).to eq(12)
   end
 
   it 'finds service category' do
