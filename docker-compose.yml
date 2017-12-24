@@ -1,0 +1,10 @@
+version: '3'
+services:
+  ruby:
+    build:
+      context: .
+      dockerfile: ./docker/ruby/Dockerfile
+    volumes:
+      - .:/kenpo_api
+    tty: true
+    stdin_open: true

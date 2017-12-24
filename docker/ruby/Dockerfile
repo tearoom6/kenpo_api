@@ -1,0 +1,16 @@
+FROM ruby:2.4.2-alpine3.6
+
+ENV LANG=ja_JP.UTF-8\
+    APP_ROOT=/kenpo_api
+
+RUN apk update && \
+    apk upgrade && \
+    apk add --update --no-cache --virtual build-dependencies build-base && \
+    apk add --update --no-cache tzdata git && \
+    mkdir -p $APP_ROOT
+
+WORKDIR $APP_ROOT
+COPY . $APP_ROOT
+
+RUN bundle install --jobs=4 && \
+    apk del build-dependencies
