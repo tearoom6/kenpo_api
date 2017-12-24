@@ -32,8 +32,10 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'bundler', '~> 1'
   spec.add_development_dependency 'rake', '~> 10'
   spec.add_development_dependency 'rspec', '~> 3'
-  spec.add_development_dependency 'faraday', '~> 0.10'
-  spec.add_development_dependency 'cookiejar', '~> 0.3'
-  spec.add_development_dependency 'nokogiri', '~> 1'
-  spec.add_development_dependency 'dry-validation', '~> 0.10'
+  spec.add_development_dependency 'pry', '~> 0.11.3'
+
+  spec.add_dependency 'faraday', '~> 0.10'
+  spec.add_dependency 'cookiejar', '~> 0.3'
+  spec.add_dependency 'nokogiri', '~> 1'
+  spec.add_dependency 'dry-validation', '~> 0.10'
 end
