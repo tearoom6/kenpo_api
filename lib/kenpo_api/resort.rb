@@ -42,7 +42,7 @@ module KenpoApi
       criteria[:state]        = html_document.xpath('id("apply_state")/*/@value')       .map {|attr| attr.value }.select {|val| val != '' }  # (1..47)
       criteria[:join_time]    = html_document.xpath('id("apply_join_time")/*/@value')   .map {|attr| attr.value }.select {|val| val != '' }  # ['2017-04-01', .., '2017-04-30']
       criteria[:night_count]  = html_document.xpath('id("apply_night_count")/*/@value') .map {|attr| attr.value }.select {|val| val != '' }  # (1..2)
-      criteria[:room_number]  = html_document.xpath('id("house_select")/*/@value')      .map {|attr| attr.value.to_i }                       # (1..10)
+      criteria[:room_count]   = html_document.xpath('id("house_select")/*/@value')      .map {|attr| attr.value.to_i }                       # (1..10)
       criteria
     end
 
@@ -78,7 +78,7 @@ module KenpoApi
         required(:join_time)    .filled(included_in?: criteria[:join_time])
         required(:night_count)  .filled(included_in?: criteria[:night_count])
         required(:stay_persons) .filled(:int?)
-        required(:room_persons) .filled{ array? & each(:int?) & size?(criteria[:room_number]) }
+        required(:room_persons) .filled{ array? & each(:int?) & size?(criteria[:room_count]) }
         required(:meeting_dates).value{ array? & each{ int? & included_in?([1,2,3]) } & size?((0..3)) }
         required(:must_meeting) .maybe(:bool?)
       end
