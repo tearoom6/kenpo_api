@@ -6,7 +6,7 @@ ENV LANG=ja_JP.UTF-8\
 RUN apk update && \
     apk upgrade && \
     apk add --update --no-cache --virtual build-dependencies build-base && \
-    apk add --update --no-cache tzdata git && \
+    apk add --update --no-cache tzdata git less && \
     mkdir -p $APP_ROOT
 
 WORKDIR $APP_ROOT
