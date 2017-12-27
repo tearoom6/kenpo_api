@@ -12,6 +12,7 @@ module KenpoApi
       laforet:              'ラフォーレ倶楽部',
       thalassotherapy:      'タラソテラピー',
       recreation:           '体育奨励イベント',
+      room_search_vacant:   '健保会館付属会議室(空き照会)',
     }
 
     attr_reader :category_code, :name, :path
