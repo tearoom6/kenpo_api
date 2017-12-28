@@ -1,4 +1,4 @@
-FROM ruby:2.4.2-alpine3.6
+FROM ruby:2.5.0-alpine3.7
 
 ENV LANG=ja_JP.UTF-8\
     APP_ROOT=/kenpo_api
