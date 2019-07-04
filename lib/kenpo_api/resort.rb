@@ -6,7 +6,7 @@ module KenpoApi
 
     def self.resort_names
       category = ServiceCategory.find(:resort_reserve)
-      raise NotFoundError.new("Service category not found. code: #{category_code}") if category.nil?
+      raise NotFoundError.new("Service category not found. code: resort_reserve") if category.nil?
       category.service_groups.map {|group| group.name}
     end
 
