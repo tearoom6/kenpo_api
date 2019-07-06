@@ -1,5 +1,10 @@
 # KenpoApi
 
+:construction: This gem is no longer available by the renewal of the ITS-kenpo site in June 14, 2019.
+See the detail in [here](https://github.com/tearoom6/kenpo_api/issues/7).
+
+---
+
 Ruby binding for kenpo reservation API ([関東ITソフトウェア健康保険組合 施設・レクリエーション](https://as.its-kenpo.or.jp/)).
 
 [![Travis](https://img.shields.io/travis/tearoom6/kenpo_api.svg)](https://travis-ci.org/tearoom6/kenpo_api)
