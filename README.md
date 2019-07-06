@@ -1,6 +1,6 @@
 # KenpoApi
 
-This gem is no longer available by the renewal of the ITS-kenpo site in June 14, 2019.
+:construction: This gem is no longer available by the renewal of the ITS-kenpo site in June 14, 2019.
 See the detail in [here](https://github.com/tearoom6/kenpo_api/issues/7).
 
 ---
